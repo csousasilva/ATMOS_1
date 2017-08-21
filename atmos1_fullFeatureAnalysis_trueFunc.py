@@ -367,7 +367,7 @@ for mol in set(strong_window_molecules):
 print count_doesnt_exist, 'do not have linelists'
 print count_exists, 'have a linelist'
 
-
+print 'testing git branch?'
 plotted_molecule = 'NCC(O)(CC)'
 example = molecules[plotted_molecule]
 #print len(example.functionals)
