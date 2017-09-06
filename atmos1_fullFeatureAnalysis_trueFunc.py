@@ -80,7 +80,7 @@ class Molecule:
         atoms = len(re.sub(r"[^A-Z]+",'',self.code))
 
         return atoms
-
+asdaasdasd
     def prBranches(self, property):
         pr_branch_x = []
         pr_branch_y = []
