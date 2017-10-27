@@ -214,7 +214,6 @@ with open('func_testvim.spaces') as f:
 print len(functional_data)
 #this bit isnt working, maybe because the file does not have normal spacing?
 for line in functional_data:
-    print line
     columns = line.strip().split()
     
     code = columns[0]
@@ -235,8 +234,6 @@ for line in functional_data:
 
     symmetry = Symmetry(symmetry_name)
     
-    print symmetry
-    
     property = Property(low, high, intensity)
 
     functional_dictionary[code].addSymmetry(symmetry)
@@ -254,25 +251,54 @@ for line in plotable_molecules:
 
 
 # Load Molecules
-print functional_dictionary.keys()
+#print functional_dictionary.keys()
 
 molecules = {}
 #molecule_dictionary = pickle.load(open("dict_sorted_results_func_intra_test2_numbers.p", "rb"))
 molecule_dictionary = pickle.load(open("dict_sorted_results_func_intra_table_part.p", "rb"))
 #print 'test molecule', molecule_dictionary['[H]OC([H])(C)C']
 print 'Molecule dictionary sample', molecule_dictionary.items()[:5]
-print 'Functional for molecule SCC(NN)=O', molecule_dictionary.get('SCC(NN)=O')
+print 'Functionals for molecule C(C)NCC(O)', molecule_dictionary.get('C(C)NCC(O)')
 print '\n', 'Number of molecules', len(molecule_dictionary.items())
 
-#for molecule_code, molecule_functionals in molecule_dictionary.iteritems():
-#    if len(molecule_dictionary.get(molecule_code)) >= 9:
-#        if molecule_code in plotables:
-#            print molecule_code, ' with ',len(molecule_dictionary.get(molecule_code)), ' functionals'
-#        else:
-#            print molecule_code, 'no linelist but these functionals:', molecule_dictionary.get(molecule_code)
-#        
-                                         
+# for molecule_code, molecule_functionals in molecule_dictionary.iteritems():
+#     if len(molecule_dictionary.get(molecule_code)) >= 12:
+#         if molecule_code in plotables:
+#             print molecule_code, ' with ',len(molecule_dictionary.get(molecule_code)), ' functionals'
+#         else:
+#             print molecule_code, 'no linelist but these functionals:', molecule_dictionary.get(molecule_code)
 
+
+#[H]OP([H])([!#1])=O
+#Functional for HCN, specifically for the ≡C-H bending and stretching motions, is '[H]C#C[!#1]'
+
+for molecule_code, molecule_functionals in molecule_dictionary.iteritems():
+     if len(molecule_dictionary.get(molecule_code)) >= 1:
+        if any('[H]OP(=O)(O[H])OC([H])([H])[H]' in s for s in molecule_dictionary.get(molecule_code)) :
+            if molecule_code in plotables:
+                print molecule_code, ' with ', len(molecule_dictionary.get(molecule_code)), ' functionals'
+            else:
+                print molecule_code, 'no linelist but these functionals:', molecule_dictionary.get(molecule_code)
+
+molecules_with_triplebondCH = []
+for molecule_code, molecule_functionals in molecule_dictionary.iteritems():
+     if any('[H]C#C[!#1]' in s for s in molecule_dictionary.get(molecule_code)):
+         #print molecule_code, 'has ≡C-H functional and all these other functionals:', molecule_dictionary.get(molecule_code)
+         molecules_with_triplebondCH.append(molecule_code)
+
+print len(molecules_with_triplebondCH), 'molecules have a similar ≡C-H functional'
+print molecules_with_triplebondCH
+
+molecules_with_triplebondCH_and_spectra = []
+for molecule_code in molecules_with_triplebondCH:
+    if molecule_code in plotables:
+        print molecule_code, 'has spectra'
+        molecules_with_triplebondCH_and_spectra.append(molecule_code)
+    else:
+        print molecule_code, 'no linelist '
+
+print len(molecules_with_triplebondCH_and_spectra), 'molecules have a similar ≡C-H functional and spectra'
+print molecules_with_triplebondCH_and_spectra
 
 for molecule_code, molecule_functionals in molecule_dictionary.iteritems():
     molecule = Molecule(molecule_code)
@@ -304,10 +330,15 @@ methane_atmosphere= [(420.4,1042.4),(1044.4,1144.4),(1861.6,2272.0),(3320.0,3636
                     (4754.0,5082.0),(5158.0,5258.0),(6268.0,6610.0),(6612.0,6712.0),
                     (7704.0,8116.0),(8144.0,8244.0),(9058.0,11020.0)]
 
+#features of HCN, approximately. See hcn.agr for spectra at three resolutions
+hcn_regions= [(0.0,100.0),(600.0,820.0),(1340.0,1500.0),(3200.0,3400.0)]
+hcn_strong = [(0.0,100.0),(600.0,820.0)]
+hcn_strong_infrared = [(600.0,820.0)]
+
 # print co2_windows[0][0] gives the first item of the first tuple (low freq of the first window)
 
 # Finds all the strong features whose average frequency is within a window
-atmosphere = earth2_atmosphere
+atmosphere = hcn_strong_infrared
 window_molecules = []
 strong_window_molecules = []
 
@@ -374,7 +405,7 @@ print count_doesnt_exist, 'do not have linelists'
 print count_exists, 'have a linelist'
 
 
-plotted_molecule = 'NCC(O)(CC)'
+plotted_molecule = 'CN(OC#C)C'
 example = molecules[plotted_molecule]
 #print len(example.functionals)
 
